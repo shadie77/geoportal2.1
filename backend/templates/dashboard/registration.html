@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pageTitle }}</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <div class="input_container">
+            <div class="logo">
+                <img src="{% static 'images/laswa.png' %}" alt="laswa">
+            </div>
+            <h2>Sign Up</h2>
+            <p id="para">
+                {% if user_form.errors %}
+                    {% for field in user_form %}
+                        {% for error in field.errors %}
+                            <strong>{{ error|escape }}</strong>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+            <div class="option">
+                <button class="gl"><a href="https://accounts.google.com/signin/v2/challenge/pwd?continue=https%3A%2F%2Fmyaccount.google.com%2Fsigninoptions%2Frecovery-options-collection%3Futm_source%3DWeb%26utm_medium%3DWeb%26utm_campaign%3Dinterstitial%26oev%3Dlytf%253D7%2526wvtx%253D2%2526trs%253Dli%2526stel%253D1%26hl%3Den%26continue%3Dhttps%3A%2F%2Faccounts.google.com%2FServiceLogin%3Fcontinue%253Dhttps%25253A%25252F%25252Fmail.google.com%25252Fmail%25252Fu%25252F0%25252F%2526service%253Dmail%2526hl%253Den%2526authuser%253D0%2526passive%253Dtrue%2526sarp%253D1%2526aodrpl%253D1%2526checkedDomains%253Dyoutube%2526checkConnection%253Dyoutube%25253A329%25253A0%2526pstMsg%253D1%2526osid%253D1%26service%3Dmail%26rapt%3DAEjHL4PClUzfc5MzvtJoZ2IjQJeqcVA0FdVYEgFYT1ddZMT44vP7ZAJvl8pzAUpOmGtszR9ow6lJ8WE-flmbvnjOMGkjZ2Nphw%26pli%3D1&hl=en&osid=1&rart=ANgoxccYd1tRE_gkHteg6m4Yd3usDJ3pPp8bNMQvpHCLRGoheXFKeG8u0hmitaV53TDJpC2Cu23BtzUQE4UYz_orX4UgTNqGIw&TL=AM3QAYZ_KDPSDRHLh-wbf0f4D4BYsxDv3_MdTnJZ59Urdw_1DCkILLPNnbb0ZRWq&flowName=GlifWebSignIn&cid=1&flowEntry=ServiceLogin">Sign up with google</a><img src="{% static 'images/icons8-google-480.png' %}" alt="google"></button>
+            </div>
+
+            <form action="{% url 'register' %}" method="POST" >
+                {% csrf_token %}
+                <div class="user_details">
+                    <div class="input_box">
+                        <span class="details">First Name <span>*</span></span>
+                        {{ user_form.first_name }}
+                    </div>
+
+                    <div class="input_box">
+                        <span class="details">Last Name <span>*</span></span>
+                        {{ user_form.last_name }}
+                    </div>
+                    
+                    <div class="input_box">
+                        <span class="details">Email <span>*</span></span>
+                        {{ user_form.email }}
+                    </div>
+
+                    <div class="input_box">
+                        <span class="details">Username<span>*</span></span>
+                        {{ user_form.username }}
+                    </div>
+                    
+                    <div class="input_box">
+                        <span class="details">Phone Number <span>*</span></span>
+                        {{ userinfo_form.phone_number }}
+                    </div>
+                    
+                    <div class="input_box">
+                        <span class="details">Password <span>*</span></span>
+                        {{ user_form.password1 }}
+                    </div>
+                    
+                    <div class="input_box">
+                        <span class="details">Confirm Password <span>*</span></span>
+                        {{ user_form.password2 }}
+                    </div>
+                </div>
+
+                <div class="button">
+                    <input type="submit" value="SIGN UP">
+                </div>
+            </form>
+            <p id="existing_user">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,449 @@
+
+.mini-info{
+    z-index: 401;
+    position: absolute;
+    background-color: #007ee6;
+    left: 98%;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    overflow: hidden;
+    padding: 5px 30px 30px;
+    transition: .5s;
+}
+
+.mini-info.active {
+  background-color: white;
+    left: 70%;
+}
+
+.mini-info .toggle-btn {
+    position: absolute;
+    top: 35%;
+    left: 0%;
+    z-index: 401;
+    
+}
+/*
+.toggle-btn span {
+    width: 35px;
+    height: 4px;
+    background-color: #000;
+    display: block;
+    margin-top: 4px;
+    z-index: 401;
+}
+*/
+  
+.jtitle {
+    background-color: #fff;
+    margin: 0px;
+    padding: 0px;
+    margin-bottom: 5px;
+    visibility: hidden;
+}
+
+.jtitle.active {
+  visibility: visible;
+  animation: 5s fadeIn;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+
+
+.jtitle img {
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.jtitle h3 {
+    height: 50px;
+    line-height: 50px;
+    text-align: left;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #3672B1;
+    
+}
+
+.content {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 650px;
+    display: inline-block;
+    direction: rtl;
+    visibility: hidden;
+}
+
+.content.active {
+  visibility: visible;
+  animation: 5s fadeIn;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+.content h4 {
+    background-color: #EDF6FD;
+    border-bottom: 1px solid #ccc;
+    font-size: 1rem;
+    margin: 0px;
+    padding: 0 20px;
+    font-weight: bold;
+    line-height: 50px;
+    cursor: pointer;
+    height: 50px;
+    color: black;
+    text-align: left;
+}
+
+.inner-content {
+    display: block;
+    padding: 0px 5px;
+    margin: 0px;
+    direction: ltr;
+}
+
+.inner-content .contour {
+    margin: 0px;
+    padding: 0px;
+    height: 200px;
+    max-height: 200px;
+    width: 100%;
+}
+.inner-content .contour #myDiv {
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    border-bottom: 1px solid #ccc;
+}
+
+.inner-content .small-info {
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+    max-height: 100px;
+    margin: 15px;
+    margin-bottom: 0px;
+}
+
+.coordinates {
+    padding: 10px 0px;
+    width: 47%;
+    border-bottom: 1px solid #ccc;
+}
+
+.inner-content .small-info .coordinates h6 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 0px;
+    margin: 0px;
+    color: black;
+    text-align: left;
+}
+
+.coordTable {
+    display: none;
+}
+/*
+#numberHide {
+    display: none;
+}
+*/
+
+#lat {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: normal;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.9rem;
+    color: rgba(39, 37, 37, 0.8);
+    text-align: left; 
+}
+
+.number {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+    font-weight: bold;
+    color: black;
+    font-size: 0.9rem;
+    padding-left: 5px;
+}
+
+.coordinates p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+    font-weight: normal;
+    color: rgb(194, 30, 30);
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+#numberFill {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+    font-weight: normal;
+    color: black;
+    font-size: 1.9rem;
+}
+
+.headerSpace {
+    margin: 0px;
+    padding: 0px;
+    height: 20px;
+}
+
+
+.term-image {
+    margin-top: 20px;
+    width: 100%;
+    height: fit-content;
+    position: absolute;
+    display: none;
+}
+
+.term-image img {
+    width: 100%;
+    border-radius: 6px;
+    position: absolute;
+}
+
+.term-image .prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 12px;
+    margin-top: -22px;
+    color: rgb(250, 250, 250);
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+  }
+
+.term-image .next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover {
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 0px 15px 15px 0;
+}
+
+.next:hover {
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 15px 0px 0px 15px;
+}
+
+.fade-in-image {
+    animation: fadeIn 2s;
+  }
+@keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+
+.fade-out-image {
+    animation: fadeOut 2s;
+  }
+@keyframes fadeOut {
+    0% {opacity:1;}
+    100% {opacity:0;}
+  }
+  
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+  
+@keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+}
+
+@media only screen and (max-width: 300px) {
+    .prev, .next,.text {font-size: 11px}
+  }
+
+/*--------------------------------------------------------------------------*/
+/* JETTY LABEL TOOL STYLE
+/*--------------------------------------------------------------------------*/
+.jettylabels {
+    background-color: white;
+    border: transparent;
+    box-shadow:none;
+    font-family: 'Roboto';
+    font-size: 0.6rem;
+    font-weight: bolder;
+    margin: 0px;
+    padding: 0px;
+}
+
+/* END OF JETTY LABELS
+---------------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------------------
+/* STYLE THE POPUP 
+----------------------------------------------------------------------------------------
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding: auto;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .modal-content {
+    margin: 50px auto;
+    border: 1px solid #999;
+    width: 40%;
+  }
+  h2,
+      p {
+        margin: 0 0 20px;
+        font-weight: 400;
+        color: #999;
+      }
+      span {
+        color: #666;
+        display: block;
+        padding: 0 0 5px;
+      }
+      form {
+        padding: 25px;
+        margin: 25px;
+        box-shadow: 0 2px 5px #f5f5f5;
+        background: #eee;
+      }
+      input,
+      textarea {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #1c87c9;
+        outline: none;
+      }
+      .contact-form button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: #1c87c9;
+        font-size: 16px;
+        font-weight: 400;
+        color: #fff;
+      }
+      button:hover {
+        background: #2371a0;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      button.button {
+        background: none;
+        border-top: none;
+        outline: none;
+        border-right: none;
+        border-left: none;
+        border-bottom: #02274a 1px solid;
+        padding: 0 0 3px 0;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button.button:hover {
+        border-bottom: #a99567 1px solid;
+        color: #a99567;
+      }
+      */
+/*---------------------------------------------------------------------
+STYLE JETTY FORM
+----------------------------------------------------------------------*/
+
+.formDiv {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.9rem;
+  padding: 0px;
+  margin: 10px;
+  margin-top: 30px;
+  color: red;
+  text-align: left;
+  direction: ltr;
+}
+
+.formDiv .formDetails {
+  width: 100%;
+  padding: 0px;
+  margin-top: 30px;
+  margin: 10px;
+  box-shadow: 0 2px 5px #f5f5f5;
+  
+}
+.formDetails input {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #1c87c9;
+        border-radius: 8px;
+        box-shadow: 2px 4px 3px #888888;
+        outline: none;
+      }
+
+.formDetails button {
+        width: 40%;
+        padding: 10px;
+        border: none;
+        background: #1c87c9;
+        font-size: 16px;
+        font-weight: 400;
+        color: #fff;
+      }
+
+button:hover {
+        background: #2371a0;
+      }
+
+.saveReport {
+  margin-left: 15%;
+  margin-top: 10px;
+  visibility: hidden;
+  
+}
+
+   

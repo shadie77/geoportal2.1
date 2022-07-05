@@ -1,0 +1,430 @@
+/* -------------------------------- 
+
+Primary style
+
+-------------------------------- */
+
+  
+  /* -------------------------------- 
+  
+  Slide In Panel - by CodyHouse.co
+  
+  -------------------------------- */
+
+  
+  .cd-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
+    visibility: hidden;
+    -webkit-transition: visibility 0s 0.6s;
+    transition: visibility 0s 0.6s;
+  }
+  
+  .cd-panel::after {
+    /* overlay layer */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-transition: background 0.3s 0.3s;
+    transition: background 0.3s 0.3s;
+  }
+  
+  .cd-panel.cd-panel--is-visible {
+    visibility: visible;
+    -webkit-transition: visibility 0s 0s;
+    transition: visibility 0s 0s;
+  }
+  
+  .cd-panel.cd-panel--is-visible::after {
+    background: rgba(0, 0, 0, 0.6);
+    -webkit-transition: background 0.3s 0s;
+    transition: background 0.3s 0s;
+  }
+  
+  .cd-panel__header {
+    position: fixed;
+    width: 90%;
+    height: 50px;
+    line-height: 50px;
+    background: white;
+    z-index: 9999;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+    -webkit-transition: -webkit-transform 0.3s 0s;
+    transition: -webkit-transform 0.3s 0s;
+    transition: transform 0.3s 0s;
+    transition: transform 0.3s 0s, -webkit-transform 0.3s 0s;
+    -webkit-transform: translateY(-50px);
+        -ms-transform: translateY(-50px);
+            transform: translateY(-50px);
+  }
+  
+  .cd-panel__header h1 {
+    color: black;
+    padding-left: 5%;
+    padding-top: 0%;
+    margin-top: 0%;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .cd-panel--from-right .cd-panel__header {
+    right: 0;
+  }
+  
+  .cd-panel--from-left .cd-panel__header {
+    left: 0;
+  }
+  
+  .cd-panel--is-visible .cd-panel__header {
+    -webkit-transition: -webkit-transform 0.3s 0.3s;
+    transition: -webkit-transform 0.3s 0.3s;
+    transition: transform 0.3s 0.3s;
+    transition: transform 0.3s 0.3s, -webkit-transform 0.3s 0.3s;
+    -webkit-transform: translateY(0px);
+        -ms-transform: translateY(0px);
+            transform: translateY(0px);
+  }
+  
+  @media only screen and (min-width: 768px) {
+    .cd-panel__header {
+      width: 70%;
+    }
+  }
+  
+  @media only screen and (min-width: 1170px) {
+    .cd-panel__header {
+      width: 50%;
+    }
+  }
+  
+  .cd-panel__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 60px;
+    /* image replacement */
+    display: inline-block;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+  }
+  
+  .cd-panel__close::before, .cd-panel__close::after {
+    /* close icon created in CSS */
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 20px;
+    height: 3px;
+    width: 20px;
+    background-color: #424f5c;
+    /* this fixes a bug where pseudo elements are slighty off position */
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+  }
+  
+  .cd-panel__close::before {
+    -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+  }
+  
+  .cd-panel__close::after {
+    -webkit-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+  }
+  
+  .cd-panel__close:hover {
+    background-color: #424f5c;
+  }
+  
+  .cd-panel__close:hover::before, .cd-panel__close:hover::after {
+    background-color: #ffffff;
+    -webkit-transition: -webkit-transform 0.3s;
+    transition: -webkit-transform 0.3s;
+    transition: transform 0.3s;
+    transition: transform 0.3s, -webkit-transform 0.3s;
+  }
+  
+  .cd-panel__close:hover::before {
+    -webkit-transform: rotate(220deg);
+        -ms-transform: rotate(220deg);
+            transform: rotate(220deg);
+  }
+  
+  .cd-panel__close:hover::after {
+    -webkit-transform: rotate(135deg);
+        -ms-transform: rotate(135deg);
+            transform: rotate(135deg);
+  }
+  
+  .cd-panel--is-visible .cd-panel__close::before {
+    -webkit-animation: cd-close-1 0.6s 0.3s;
+            animation: cd-close-1 0.6s 0.3s;
+  }
+  
+  .cd-panel--is-visible .cd-panel__close::after {
+    -webkit-animation: cd-close-2 0.6s 0.3s;
+            animation: cd-close-2 0.6s 0.3s;
+  }
+  
+  @-webkit-keyframes cd-close-1 {
+    0%, 50% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(45deg);
+              transform: rotate(45deg);
+    }
+  }
+  
+  @keyframes cd-close-1 {
+    0%, 50% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(45deg);
+              transform: rotate(45deg);
+    }
+  }
+  
+  @-webkit-keyframes cd-close-2 {
+    0%, 50% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg);
+    }
+  }
+  
+  @keyframes cd-close-2 {
+    0%, 60% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg);
+    }
+  }
+  
+  .cd-panel__container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background: rgb(247, 244, 244);
+    z-index: 1;
+    -webkit-transition: -webkit-transform 0.3s 0.3s;
+    transition: -webkit-transform 0.3s 0.3s;
+    transition: transform 0.3s 0.3s;
+    transition: transform 0.3s 0.3s, -webkit-transform 0.3s 0.3s;
+  }
+  
+  .cd-panel--from-right .cd-panel__container {
+    right: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0);
+  }
+  
+  .cd-panel--from-left .cd-panel__container {
+    left: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+  }
+  
+  .cd-panel--is-visible .cd-panel__container {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    -webkit-transition-delay: 0s;
+            transition-delay: 0s;
+  }
+  
+  @media only screen and (min-width: 768px) {
+    .cd-panel__container {
+      width: 70%;
+    }
+  }
+  
+  @media only screen and (min-width: 1170px) {
+    .cd-panel__container {
+      width: 50%;
+    }
+  }
+  
+  .cd-panel__content {
+    display: grid;
+    grid-column-gap: 0.5%;
+    grid-template-columns: 2fr 1fr;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 96%;
+    height: 100%;
+    padding: 60px 2%;
+    overflow: auto;
+    /* smooth scrolling on touch devices */
+    -webkit-overflow-scrolling: touch;
+    background-color: rgb(236, 233, 233);
+  }
+  
+  .cd-panel__content p {
+    font-size: 0.9rem;
+    color: #e00043;
+    line-height: 1.4;
+    margin: 2em 0;
+  }
+  
+  .cd-panel__content p:first-of-type {
+    margin-top: 0;
+  }
+  
+  .grid-item {
+    padding: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: black;
+  }
+
+  /*
+  Jetty Slideout first div
+  */
+  
+  .first-div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    grid-template-rows: 35% 13% 45%;
+  }
+
+  .image-div {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    grid-column: 1/4;
+    background-color: white;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  .terminal-div {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 10px;
+    text-align: justify;
+    margin-left: 0px;
+    padding-left: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  .terminal-div h4 {
+    margin: 0px;
+    margin-bottom: 10px;
+    text-align: center;
+    padding: 0px;
+    color: #9c9797;
+  }
+  .terminal-div div {
+    margin-bottom: 10px;
+    color: #9c9797;
+    font-weight: normal;
+  }
+
+  .travel-time-div {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 3px;
+    border-radius: 10px;
+    background-color: white;
+    grid-column: 1/3;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  .daily-boat-div {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Jetty Image Display */
+  .mySlides {
+    display: none;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 10px;
+  }
+
+ .mySlides img {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+  }
+
+  /* Previous and next button */
+  .previousButton {
+    float: left;
+    background-color: black;
+    color: white;
+    margin: 0px;
+    position:relative;
+    top: 50%;
+  }
+
+  .nextButton {
+    float: right;
+    background-color: black;
+    color: white;
+  }
+
+
+
+
+
+  /*Jetty Slideout Second Div */
+
+  .second-div {
+    display: flex;
+    flex-direction: column;
+
+  }
+
+  .second-div-item {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: white;
+    border-radius: 10px;
+    margin: 4px;
+    height: 350px;
+    max-height: 500px;
+    color: #e00043;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  @media only screen and (min-width: 768px) {
+    .cd-panel__content p {
+      font-size: 1.6rem;
+      line-height: 1.6;
+    }
+  }
+  

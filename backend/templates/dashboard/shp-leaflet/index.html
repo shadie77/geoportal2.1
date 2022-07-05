@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      Preview
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <!--[if lte IE 8]>
+      <link
+        rel="stylesheet"
+        href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css"
+      />
+    <![endif]-->
+    <style>
+      html {
+        height: 100%;
+      }
+
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 90%;
+      }
+    </style>
+    <link rel="stylesheet" href="./gh-pages.css" />
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+    <script src="../shp-leaflet/leaflet.shpfile.js"></script>
+    <script src="../shp-leaflet/catiline.js"></script>
+
+    <script>
+      //OSM tiles attribution and URL
+      var osmLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+      var osmURL = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+      var osmAttrib = "&copy; " + osmLink;
+
+      //Carto tiles attribution and URL
+      var cartoLink = '<a href="http://cartodb.com/attributions">CartoDB</a>';
+      var cartoURL =
+        "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png";
+      var cartoAttrib = "&copy; " + osmLink + " &copy; " + cartoLink;
+
+      //Stamen Toner tiles attribution and URL
+      var stamenURL =
+        "http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}";
+      var stamenAttrib =
+        'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
+      //Creation of map tiles
+      var osmMap = L.tileLayer(osmURL, { attribution: osmAttrib });
+      var cartoMap = L.tileLayer(cartoURL, { attribution: cartoAttrib });
+      var stamenMap = L.tileLayer(stamenURL, {
+        attribution: stamenAttrib,
+        subdomains: "abcd",
+        minZoom: 0,
+        maxZoom: 20,
+        ext: "png"
+      });
+      var m = L.map("map", {
+        center: [36.752887, 3.042048],
+        zoom: 5,
+        layers: [osmMap]
+      });
+
+      var couche = "./jetty.zip";
+      // var couche = "a1.zip";
+
+      // document.getElementById("couche").onchange = function (e) {
+      //   //Do what you want
+      console.log("=a=a=a>>>>", this.value);
+      //   couche = this.value;
+      // };
+      var shpfile = new L.Shapefile(couche, {
+        onEachFeature: function (feature, layer) {
+          if (feature.properties) {
+            layer.bindPopup(
+              Object.keys(feature.properties)
+                .map(function (k) {
+                  if (k === "__color__") {
+                    return;
+                  }
+                  console.log("=========>", feature);
+                  return k + ": " + feature.properties[k];
+                })
+                .join("<br />"),
+              {
+                maxHeight: 200
+              }
+            );
+          }
+        },
+        style: function (feature) {
+          return {
+            opacity: 1,
+            fillOpacity: 0.7,
+            radius: 6,
+            color: "tomato"
+          };
+        },
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+            opacity: 1,
+            fillOpacity: 0.7,
+            color: feature.properties.__color__
+          });
+        }
+      });
+      shpfile.addTo(m);
+      shpfile.once("data:loaded", function () {
+        console.log("finished loaded shapefile");
+      });
+
+      var baseLayers = {
+        "OSM Mapnik": osmMap,
+        "Carto DarkMatter": cartoMap,
+        "Stamen Toner": stamenMap
+      };
+
+      //Add baseLayers to map as control layers
+      L.control.layers(baseLayers).addTo(m);
+    </script>
+  </body>
+</html>

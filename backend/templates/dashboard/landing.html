@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="{% static 'css/landingstyle.css' %}">
+    <link rel="stylesheet" href="{% static 'icofont/icofont.min.css' %}">
+    <script src="{ static 'scripts/plotly.min.js' %}"></script>
+</head>
+<body>
+    <div class="page">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container">
+              <a class="navbar-brand" href="#">
+                <img src="{% static 'images/laswa.png' %}" alt="" width="60" height="60">
+              </a>
+              <div class="butns">
+                  <button>
+                      <a href="{% url 'login' %}">Login</a>
+                  </button>
+                  <button>
+                      <a href="{% url 'register' %}">Sign Up</a>
+                  </button>
+              </div>
+            </div>
+        </nav>
+
+        <div class="slideshow">
+            <div class="slideshow-item fade" style="display: block;">
+                <img src="{% static 'images/pexels-johnmark-barit-2680058.jpg' %}" alt="">
+                <div class="slideshow-item-text">
+                    <h3>EMBARK ON A WATER ADVENTURE</h3>
+                    <P>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid voluptatum, odio possimus molestiae quas modi dolorum ipsum quia incidunt accusamus, obcaecati commodi similique expedita omnis dolores tenetur inventore. Veniam, quia?</P>
+                </div>
+
+                <div class="mini">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div>
+                <div class="mini1">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div>
+                <div class="mini2">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div> 
+            </div>
+
+             <div class="slideshow-item fade">
+                <img src="{% static 'images/pexels-peter-fazekas-880873.jpg' %}" alt="">
+                <div class="slideshow-item-text">
+                    <h3>EMBARK ON A WATER ADVENTURE</h3>
+                    <P>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid voluptatum, odio possimus molestiae quas modi dolorum ipsum quia incidunt accusamus, obcaecati commodi similique expedita omnis dolores tenetur inventore. Veniam, quia?</P>
+                </div>
+
+                <div class="mini">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div>
+                <div class="mini1">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div>
+                <div class="mini2">
+                    <p>Lorem ipsum dolor sit amet consectetur elit.</p>
+                    <h2>12450</h2>
+                </div> 
+            </div>
+            <a class="prev" onclick="plusslide(-1)">&#10094</a>
+            <a class="next" onclick="plusslide(1)">&#10095</a>
+
+            <div class="dotsbox" style="text-align: center;">
+                <span class="dot" onclick="currentslide(1)"></span>
+                <span class="dot" onclick="currentslide(2)"></span>
+            </div>
+
+
+        </div>
+
+        <div class="drone">
+            <img src="{% static 'images/BATHYMETRY-OF-LAGOS-LAGOON.jpg' %}" alt="">
+            <div class="drone-text">
+                <h3>DRONE MAPPING</h3>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat impedit libero minima porro dolore sapiente, beatae repellendus numquam quam quaerat vel ratione necessitatibus amet nisi harum praesentium ad quis cum! beatae repellendus numquam quam quaerat vel ratione necessitatibus amet nisi harum praesentium. Placeat impedit libero minima porro dolore sapiente</p>
+            </div>
+        </div>
+    
+        <div class="route-analysis">
+            <img src="{% static 'images/BATHYMETRY-OF-LAGOS-LAGOON.jpg' %}" alt="route-analysis">
+            <div class="route-analysis-text">
+                <h3>ROUTE ANALYSIS</h3>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat impedit libero minima porro dolore sapiente, beatae repellendus numquam quam quaerat vel ratione necessitatibus amet nisi harum praesentium ad quis cum! beatae repellendus numquam quam quaerat vel ratione necessitatibus amet nisi harum praesentium. Placeat impedit libero minima porro dolore sapiente praesentium ad quis cum! beatae repellendus numquam quam.</p>
+            </div>
+        </div>
+    
+        <div class="featured-terminal">
+            <h3>FEATURED TERMINAL</h3>
+            <div class="card-cont">
+                <div class="card">
+                     <img src="{% static 'images/pexels-peter-fazekas-880873.jpg' %}" alt="terminal_image">
+                     <h5>Badore Terminal</h5>
+                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, error esse ab itaque doloremque ipsa! Reiciendis autem illo accusantium earum harum necessitatibus optio ipsam aliquid aspernatur distinctio, impedit eos perspiciatis.</p>
+                     <div class="more">
+                         <a href="#">Browse more</a>
+                     </div>
+                </div>
+    
+                <div class="card">
+                    <img src="{% static 'images/pexels-peter-fazekas-880873.jpg' %}" alt="terminal_image">
+                    <h5>Badore Terminal</h5>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, error esse ab itaque doloremque ipsa! Reiciendis autem illo accusantium earum harum necessitatibus optio ipsam aliquid aspernatur distinctio, impedit eos perspiciatis.</p>
+                    <div class="more">
+                        <a href="#">Browse more</a>
+                    </div>
+               </div>
+    
+               <div class="card">
+                    <img src="{% static 'images/pexels-peter-fazekas-880873.jpg' %}" alt="terminal_image">
+                    <h5>Badore Terminal</h5>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, error esse ab itaque doloremque ipsa! Reiciendis autem illo accusantium earum harum necessitatibus optio ipsam aliquid aspernatur distinctio, impedit eos perspiciatis.</p>
+                    <div class="more">
+                        <a href="#">Browse more</a>
+                    </div>
+                </div>
+    
+                
+            </div>
+        </div>
+    
+        <div class="bathy">
+            <div class="backdrop">
+                <img src="{% static 'images/pexels-martin-damboldt-799091.jpg' %}" alt="">
+                <div class="bathy-text">
+                    <h3>BATHYMETRY</h3>
+                    <p3>A Bathymetry is a type of hydrographic (water based) survey that maps the depth and shapes of the underwater terrain to illustrate the land that lies below. This are some surveys carried out on some terminals.</p3>
+                </div>
+    
+                <div class="bathy-card">
+                    <h4>Average Depth of the Route</h4>
+                    <h6>Badore Terminal</h6>
+                    <div class="icon"><i class="icofont-wave"></i><p2>3500m</p2></div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. At aspernatur ipsum suscipit alias, impedit dolor cupiditate amet.</p>
+                </div>
+                
+                <div class="bathy-card1">
+                    <h4>Monthly Use of Water Transport</h4>
+                    <h6>Falomo Terminal</h6>
+                    <div class="icon"><i class="icofont-chart-pie"></i><p2>60%</p2></div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. At aspernatur ipsum suscipit alias, impedit dolor cupiditate amet.</p>
+                </div>
+    
+                <div class="bathy-card2">
+                    <h4>Tidal Survey</h4>
+                    <h6>Ikorodu Terminal</h6>
+                    <div class="icon"><i class="icofont-chart-histogram"></i><p2>3500m</p2></div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. At aspernatur ipsum suscipit alias, impedit dolor cupiditate amet.</p>
+                </div>
+    
+                <!-- Bathy Charts -->
+                <div class="chartBox">
+                    <canvas id="donutChart"></canvas>
+                </div>
+                <div class="chart">
+                    <canvas id="myChart"></canvas>
+                    <p>Falomo Terminal</p>
+                </div>
+    
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            </div>
+        </div>
+    
+        <div class="video-gallery">
+            <h3>VIDEO GALLERY</h3>
+    
+            <div class="gall-card">
+                <div class="vid-card">
+                    <video src="{% static 'video/drone.mp4' %}" width="360px" height="240px" style="border-radius: 12px;" controls="controls"></video>
+                </div>
+                <div class="vid-card">
+                    <video src="{% static 'video/drone.mp4' %}" width="360px" height="240px" style="border-radius: 12px;" controls="controls"></video>
+                </div>
+                <div class="vid-card">
+                    <video src="{% static 'video/drone.mp4' %}" width="360px" height="240px" style="border-radius: 12px;" controls="controls"></video>
+                </div>
+                <div class="vid-card">
+                    <video src="{% static 'video/drone.mp4' %}" width="360px" height="240px" style="border-radius: 12px;" controls="controls"></video>
+                </div>
+                <div class="vid-card">
+                    <video src="{% static 'video/drone.mp4' %}" width="360px" height="240px" style="border-radius: 12px;" controls="controls"></video>
+                </div>
+            </div>
+                
+    
+        </div>
+    </div>
+
+<script src="{% static 'scripts/jsfile.js' %}"></script>
+</body>
+</html>

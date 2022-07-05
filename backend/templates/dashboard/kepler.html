@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block body_block %}
+<script>
+  /* This code adds leaflet map to the geoportal */
+  /* Declare the variables here */
+
+  // Declare basemaps
+  
+  
+  // Create leaflet map variable
+  var map = L.map('map').setView([6.5099, 3.4981], 12);
+
+  // Set the pane index * Remove for now
+  //map.getPane('labels').style.zIndex = 650;
+  /*
+  //Set pane pointers
+  map.getPane('labels').style.pointerEvents = 'none';
+  */
+  
+  // Create basemap variables and add to basemap variable
+  // Create variable
+  var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      });
+  var Googlemap = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+      });
+  var Stamen_Toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}', {
+	  attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	  subdomains: 'abcd',
+	  minZoom: 0,
+	  maxZoom: 20,
+	  ext: 'png'
+      });
+  var Esri_DeLorme = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}', {
+	  attribution: 'Tiles &copy; Esri &mdash; Copyright: &copy;2012 DeLorme',
+	  minZoom: 1,
+	  maxZoom: 11
+      });
+  var Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+	maxZoom: 16
+      });
+  var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
+      });
+  var light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  })
+// Select the default basemap on load
+light.addTo(map);
+
+
+
+
+
+
+/*-------------------------------------------------------------------------------------------------------------*/
+// DECLARE VARIBALES 
+/*-------------------------------------------------------------------------------------------------------------*/
+
+  let jetty = "http://127.0.0.1:8000/api/jetty"; // Jetty api url
+  let isis = "https://api.wheretheiss.at/v1/satellites/25544"; // isis test url for Kenny
+  let route = "http://127.0.0.1:8000/api/route"; // Route api url
+  let boundary = "http://127.0.0.1:8000/api/boundary"; // Boundary api url
+  let routedata, jettydata, boundarydata;
+  let jettyHeader = document.getElementById("jettyNameHeader")
+  let jettyCoord = document.getElementsByClassName('jettyinfo')[0]
+  let passengerCount = document.getElementsByClassName('jettyinfo')[1]
+  let avgTrip = document.getElementsByClassName('jettyinfo')[2]
+  let avgPassenger = document.getElementsByClassName('jettyinfo')[3]
+  let picHeader = document.getElementsByClassName('jettyinfo')[4]
+  let hidep = document.getElementById("numberHide")
+  let coordTable = document.getElementsByClassName("coordTable")[0]
+  let latitudeCoord = document.getElementsByClassName('number')[0]
+  let longitudeCoord = document.getElementsByClassName('number')[1]
+  let imageDiv = document.getElementsByClassName("term-image")[0]
+  let contourDiv = document.getElementsByClassName('contour')[0]
+
+// END OF VARIABLE DECLARATION
+/*-----------------------------------------------------------------------------------------------------------------*/
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
+// STYLE FORMAT FOR JETTIES
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+
+  var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+  function pop_Commercial_Jetty_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature
+            });
+            if (feature.properties.picture){
+              var defaultPhoto = `<img src = ${feature.properties.picture} height = "150px" width = "250px" />`
+            }
+            else {
+              var defaultPhoto = '<img src="{% static 'images/thumbnail3.jpg' %}" height="150px" width="250px"/>'
+            }
+            var detailsTable = `<table><tr><td id="lat">Latitude:</td><td>${feature.geometry.coordinates.lat}</td></tr><tr><td id="lat">Longitude:</td><td>2323</td></tr><tr><td id="lat">Landing type:</td><td>${feature.properties.type}</td></tr><tr><td id="lat">Hierarchy:</td><td>${feature.properties.terminal}</td></tr></table>`
+            var popupContent = `<center><h3>${feature.properties.name}</h3></center>${defaultPhoto} ${detailsTable}`;
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            layer.on("click", function(e){
+              imageDiv.innerHTML = ""
+              console.log(feature.geometry.coordinates)
+              // Change dashboard details
+              jettyHeader.textContent = ""
+              let anchorTag = document.createElement('a')
+              priKey = feature.id
+              anchorTag.href = `{% url "jetty_page" pk=9999 %}`.replace(9999, feature.id)  //
+              anchorTag.textContent = feature.properties.name
+              jettyHeader.appendChild(anchorTag)
+              jettyCoord.textContent = "Jetty Coordinates"
+              // Hide the Jetty Count paragraph and unhide the coordinates table
+              hidep.style.display='none' // Paragrah to hide
+              latitudeCoord.textContent = e.latlng.lat
+              longitudeCoord.textContent = e.latlng.lng
+              coordTable.style.display = "block" // Coordinate table unhidden
+              // Fetch ridership summary api and display
+              fetch('http://127.0.0.1:8000/api/ridership/average_daily_count?jetty_id='+feature.id).then(response => response.json()).then(data =>{
+                passengerCount.textContent = data.total_number_of_passengers,
+                avgTrip.textContent = data.average_daily_boat_ride,
+                avgPassenger.textContent = data.average_daily_passenger
+                picHeader.textContent = "Terminal Picture"
+                });
+              // Fetch Pictures api and add to the slider
+              
+              fetch("http://127.0.0.1:8000/api/jetty_images?jetty_id="+feature.id).then(response => response.json()).then(data =>{
+                data.forEach(function addImage(item){
+                  let img = document.createElement('img')
+                  img.src = item.medium_picture
+                  imageDiv.appendChild(img)
+                })
+              })
+              // Show the jetty image div
+              imageDiv.style.display = 'block';
+              contourDiv.style.display = 'none';
+              if (document.getElementsByClassName('mini-info')[0].classList.contains('active')){
+                pass
+              } else {
+                panel = show();
+              }
+              // Change Slideout Variables here
+            });
+        }
+  // Function to add svg to jetty data
+  function jettysvg(feature) {
+    switch(String(feature.properties['type'])){
+      case "CONCRETE":
+        return {
+          icon: new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boat1.png'
+            })
+        }; break;
+        case "FLOATING":
+
+          return{
+            icon: new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boat3.png' 
+            })
+          }; break;
+          case "WOODEN":
+            return {
+              icon: new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boat2.png'
+            })
+            }; break;
+              case "LANDING":
+                return {
+                  icon: new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boat4.png'
+            })
+                }; break;
+                default:
+                  return {
+                    icon: new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boat5.png'
+            })
+                  }
+  }
+  /*
+    var smallIcon = new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl:'../../static/images/boats.png'
+            });
+            return new L.marker(latlng, {icon: smallIcon});
+            */
+          };
+
+  // END OF JETTY STYLE
+  /*------------------------------------------------------------------------------------------------------------------------*/
+
+  
+  /*--------------------------------------------------------------------------------------------------------------------------*/
+  //STYLE WATER BOUNDARY
+  /*---------------------------------------------------------------------------------------------------------------------------*/
+
+  // Function to style water boundary
+  function style_boundary_2_0() {
+        return {
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 0.5, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        };
+
+ // WATER BOUNDARY STYLE END
+ /*--------------------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+// STYLE  ROUTE DATA
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+  // Function to style the route data
+  function route_style(feature) {
+    switch(String(feature.properties['name'])) {
+      case 'Agboyi-Ajah':
+        return {
+          opacity: 1,
+          color: 'rgba(103,0,13,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Ajah-Takwa Bay':
+        return {
+                    opacity: 1,
+          color: 'rgba(147,11,19,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Amuwo-Odofin to Falomo':
+        return {
+                    opacity: 1,
+          color: 'rgba(179,18,24,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Baiyeku-Ajah':
+        return {
+                    opacity: 1,
+          color: 'rgba(201,24,29,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Baiyeku-Falomo':
+        return {
+                    opacity: 1,
+          color: 'rgba(221,42,37,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Falomo- Ikorodu':
+        return {
+          opacity: 1,
+          color: 'rgba(240,62,46,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Falomo-Ajah':
+        return {
+          opacity: 1,
+          color: 'rgba(246,87,62,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Falomo-Ilado':
+        return {
+          opacity: 1,
+          color: 'rgba(251,112,80,1.0)',
+          dashArray: '7 10',
+          lineCap: 'square',
+          lineJoin: 'round',
+          weight: 1.5,
+          fillOpacity: 0,
+          interactive: true,
+        }
+    break;
+      case 'Falomo-Oworonsoki':
+        return {
+            opacity: 1,
+            color: 'rgba(252,134,102,1.0)',
+            dashArray: '7 10',
+            lineCap: 'square',
+            lineJoin: 'round',
+            weight: 1.5,
+            fillOpacity: 0,
+            interactive: true,
+        }
+    break;
+      case 'Falomo-Takwa Bay':
+        return {
+            opacity: 1,
+            color: 'rgba(252,156,126,1.0)',
+            dashArray: '7 10',
+            lineCap: 'square',
+            lineJoin: 'round',
+            weight: 1.5,
+            fillOpacity: 0,
+            interactive: true,
+            }
+                    break;
+                case 'Ikorodu-Ebutu Ero':
+                    return {
+                          opacity: 1,
+                color: 'rgba(252,179,152,1.0)',
+                dashArray: '7 10',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 1.5,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Ikorodu-Takwa Bay':
+                    return {
+                          opacity: 1,
+                color: 'rgba(253,200,178,1.0)',
+                dashArray: '7 10',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 1.5,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Osborne-Ikorodu':
+                    return {
+                          opacity: 1,
+                color: 'rgba(254,220,205,1.0)',
+                dashArray: '7 10',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 1.5,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Oworonsoki-Oshodi':
+                    return {
+                          opacity: 1,
+                color: 'rgba(254,233,224,1.0)',
+                dashArray: '7 10',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 1.5,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                          opacity: 1,
+                color: 'rgba(255,245,240,1.0)',
+                dashArray: '7 10',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 1.5,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }}
+
+// END ROUTE STYLE
+/*------------------------------------------------------------------------------------------------------------------------------*/
+
+// Fetch jetty Data, add svg to each point, mouse over and click function and add to map
+/*
+fetch(jetty).then(function(response){
+  return response.json();
+})
+.then(function(data){
+  let jettyLayer = L.geoJSON(data, {
+    pointToLayer: jettysvg
+  });
+  jettyLayer.addTo(map);
+ // overlayMaps['Jetties']= this.jettyLayer;
+});
+*/
+
+
+//End of Jetty Code
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+//ASYNC REQUEST TO DISPLAY DATA
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+
+// Fetch route data, add style to each route. 
+async function myFunction (url) {
+  const res = await fetch(url)
+  const data = await res.json()
+  return data
+}
+async function main() {
+    //OPTION 2
+    routedata = await myFunction(route);
+    jettydata = await myFunction(jetty);
+    boundarydata = await myFunction(boundary);
+
+    // Unzip boundary data
+    var boundaryLayer = L.geoJSON(boundarydata, {
+      style: style_boundary_2_0
+    })
+
+    // Add boundary to map
+    boundaryLayer.addTo(map);
+
+    // Create WMS-layer for Bathymetry.
+    var bathymetryLayer = new L.TileLayer.WMS('http://localhost:8080/geoserver/wms', {
+      layers: 'laswa:waterraster',
+      format: 'image/png',
+      transparent: true,
+      version: '1.3.0',
+      crs: L.CRS.EPSG4326
+    }).addTo(map);
+
+    // Create popup variable
+    var popup = L.popup()
+
+    // Add hover function to bathymetry
+    map.on('click', function(e) {
+      bathymetryLayer.getFeatureInfo({
+        latlng: e.latlng,
+        done: function(featureCollection) {
+        var eachdepth =`<h3>${featureCollection["features"][0]['properties']["GRAY_INDEX"]}</h3>` 
+        popup.setLatLng(e.latlng)
+        .setContent(eachdepth)
+        .openOn(map);
+      },
+      fail: function(errorThrown) {
+        console.log('getFeatureInfo failed: ', errorThrown);
+      }
+      });
+    });
+
+
+    // Unzip route layer
+    var routesLayer = L.geoJSON(routedata, {
+      style: route_style
+    });
+    // Add map layer to map
+    routesLayer.addTo(map)
+
+    // Unzip jetty layer
+    var jettyLayer = L.geoJSON(jettydata, {
+    pointToLayer: function (feature, latlng) {
+      label = String(feature.properties.name.replace('JETTY', '').replace('TERMINAL', "").replace('FERRY', ''))
+      var context = {
+            feature: feature,
+            variables: {},
+                    
+                };
+                return L.marker(latlng, jettysvg(feature)).bindTooltip(label, {pane: 'tooltipPane', offset: [0,-12], permanent:true, direction: 'top',  opacity:0.7, className: 'jettylabels'}).openTooltip();
+            },
+            onEachFeature: pop_Commercial_Jetty_4
+    });
+    // Add jetty to layer
+    jettyLayer.addTo(map);
+
+    var searchControl =  L.control.search({
+    layer: jettyLayer,
+    initial: false,
+    propertyName: 'name',
+    hideMarkerOnCollapse: true
+  })
+
+  searchControl.on('search_locationfound', function(e) {
+    e.layer.setStyle({fillColor: 'white', color: 'white', fillOpacity: 0.5});
+    //map.fitBounds(e.layer.getBounds());
+    if(e.layer._popup)
+        e.layer.openPopup();
+}).on('search_collapsed', function(e) {
+    LayerNameJSON.eachLayer(function(layer) {
+        LayerNameJSON.resetStyle(layer);
+    });
+});
+  searchControl.addTo(map);
+
+    
+
+    // Declare basemaps
+    var baseMaps = {
+    "Openstreetmap": openstreetmap,
+    "Googlemap": Googlemap,
+    'Stamen_Toner': Stamen_Toner,
+    'Esri_DeLorme': Esri_DeLorme,
+    'Esri_WorldGrayCanvas': Esri_WorldGrayCanvas,
+    'CartoDB_DarkMatter': CartoDB_DarkMatter,
+    'CartoDB_Light': light
+    }
+
+    var overlayMaps = {
+      "Jetties": jettyLayer,
+      'Routes': routesLayer,
+      "Boundary": boundaryLayer,
+      "Bathymetry": bathymetryLayer,
+    }
+    
+    // Add basemap and overlay to control layer
+    L.control.layers(baseMaps, overlayMaps, {position:'topleft'}).addTo(map)
+
+}
+
+//END OF ASYNC
+/*-----------------------------------------------------------------------------------------------------------------------------------------*/
+
+main()
+/*
+let routesRequest = await myFunction()
+console.log(routesRequest)
+var routes = L.geoJSON(routesRequest, {
+  style: route_style
+});
+routes.addTo(map)
+/*
+fetch(route).then(function(response){
+  return response.json();
+})
+.then(function(data){
+  var routes = L.geoJSON(data, {
+    style: route_style
+  });
+  routes.addTo(map);
+});
+console.log(routes);
+
+/* ISIS scripts for Kenny */
+/*
+fetch(isis).then(function(response){
+  return response.json();
+})
+.then(function(data){
+  var isismarker = L.latLng({
+    lat: data.latitude, lng: data.longitude
+  });
+  var isislocation = L.marker( isismarker );
+  isislocation.addTo(map);
+  var isislayer = L.layerGroup([isislocation]);
+  //overlayMaps["isis"] = isislayer;
+});
+*/
+
+// Map layers
+
+
+    </script>
+
+    <!--- To delete when Jetty Layer is Done
+      my_json = L.geoJson(data, {
+        pointToLayer: function(feature, latlng) {
+            var smallIcon = L.Icon({
+                options: {
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl: 'icone/chapel-2.png'
+                }
+            });
+            return L.marker(latlng, {icon: smallIcon});
+        },
+       onEachFeature: function (feature, layer) {
+               layer.bindPopup(feature.properties.ATT1 + '<br />'
+                                             + feature.properties.ATT2);
+       }
+     });
+
+     -->
+
+
+{% endblock %}

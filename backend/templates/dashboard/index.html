@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load leaflet_tags %}
+{% block body_block %}
+
+
+<!--
+    <script>
+        function map_init_basic(map, options) {
+      var boundary = "http://127.0.0.1:8000/api/boundary"
+      var jetty_url = "http://127.0.0.1:8000/api/jetty";
+      var route_url = "http://127.0.0.1:8000/api/route";
+      var depth_url = 'http://127.0.0.1:8000/api/depth';
+      
+      var myIcon = L.icon({
+        iconUrl: "../images/boats.png",
+        iconSize: [38, 95],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94]
+      });
+      var jettyLayer = new L.GeoJSON.AJAX(jetty_url,{
+              onEachFeature: function onEachFeature(feature, layer) {
+                var props = feature.properties;
+                var dets = feature.id
+                var content = `<h3>${props.name}</h3>`;
+                layer.bindPopup(content);
+                layer.on("mouseover",function(ev){
+                  this.openPopup();
+                });
+                layer.on("mouseout", function(evv){
+                  this.closePopup();
+                });
+                layer.on("click", function(e){
+                  document.getElementsByClassName('laswaside')[1].click();
+                  console.log(dets)
+                });
+                //layer.setIcon(new myIcon);
+      }
+    });
+jettyLayer.addTo(map)
+//var wmsLayer = L.Geoserver.wms("http://localhost:8080/geoserver/wms", {
+//  layers: "demo:bathyraster",
+//  transparent: true,
+//  interactive: true,
+//  onEachFeature: function (feature, layer) {
+//    layer.on("click", function(e){
+//      console.log("Im clicked dude")
+//    })
+//  },
+//});
+//wmsLayer.addTo(map);
+//L.tileLayer.betterWms("http://localhost:8080/geoserver/wms", {
+//        layers: 'demo:bathyraster',
+//        transparent: true,
+//        format: 'image/png'
+//      }).addTo(map);
+
+// Create & add WMS-layer.
+var tasmania = new L.TileLayer.WMS('http://localhost:8080/geoserver/wms', {
+  layers: 'laswa:waterraster',
+  format: 'image/png',
+  transparent: true,
+  version: '1.3.0',
+  crs: L.CRS.EPSG4326
+}).addTo(map);
+
+// Test popup. Delete if it doesnt work
+var popup = L.popup()
+
+// Perform 'GetFeatureInfo' request.
+map.on('click', function(e) {
+  tasmania.getFeatureInfo({
+    latlng: e.latlng,
+    done: function(featureCollection) {
+    var eachdepth =`<h3>${featureCollection["features"][0]['properties']["GRAY_INDEX"]}</h3>` 
+    popup.setLatLng(e.latlng)
+    .setContent(eachdepth)
+    .openOn(map);
+    console.log('Eachdepth is ', eachdepth);
+  },
+  fail: function(errorThrown) {
+    console.log('getFeatureInfo failed: ', errorThrown);
+  },
+  always: function() {
+      console.log('getFeatureInfo finished');
+  }
+  });
+});
+
+var routeLayer = new L.GeoJSON.AJAX(route_url,{
+        
+      });
+      routeLayer.addTo(map);
+//var depthLayer = new L.GeoJSON.AJAX(depth_url,{
+//});
+//depthLayer.addTo(map);
+//var depthaLayer = new L.GeoJSON.AJAX(deptha_url,{
+//});
+//depthaLayer.addTo(map);
+//var depthbLayer = new L.GeoJSON.AJAX(depthb_url,{
+//});
+//depthbLayer.addTo(map);
+//var depthcLayer = new L.GeoJSON.AJAX(depthc_url,{
+//});
+//depthcLayer.addTo(map);
+//var depthdLayer = new L.GeoJSON.AJAX(depthd_url,{
+//});
+//depthdLayer.addTo(map);
+
+//Measure plugin
+var measureControl = new L.Control.Measure({
+            position: 'topright',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+
+    }
+    </script>
+-->
+<script>
+// Variables
+let jettyName = document.getElementById('jettyName')
+  function map_init_basic(map, options) {
+    // Call the API Endpoints
+    var json_boundary_2 = "http://127.0.0.1:8000/api/boundary";
+    var jetty_url = "http://127.0.0.1:8000/api/jetty";
+    var route_url = "http://127.0.0.1:8000/api/route";
+    var depth_url = 'http://127.0.0.1:8000/api/depth';
+    var isis = "https://api.wheretheiss.at/v1/satellites/25544";
+    
+    // Popup function
+    var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+      var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+      measureControl.addTo(map);
+      document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+      document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+    // Create bound group
+    var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+            map.setMaxBounds(map.getBounds());
+        }
+
+    // Create & add WMS-layer.
+    var tasmania = new L.TileLayer.WMS('http://localhost:8080/geoserver/wms', {
+      layers: 'laswa:waterraster',
+      format: 'image/png',
+      transparent: true,
+      version: '1.3.0',
+      crs: L.CRS.EPSG4326
+    }).addTo(map);
+
+    // Test popup. Delete if it doesnt work
+    var popup = L.popup()
+
+    // Perform 'GetFeatureInfo' request.
+    map.on('click', function(e) {
+      tasmania.getFeatureInfo({
+        latlng: e.latlng,
+        done: function(featureCollection) {
+        var eachdepth =`<h3>${featureCollection["features"][0]['properties']["GRAY_INDEX"]}</h3>` 
+        popup.setLatLng(e.latlng)
+        .setContent(eachdepth)
+        .openOn(map);
+        console.log('Eachdepth is ', eachdepth);
+      },
+      fail: function(errorThrown) {
+        console.log('getFeatureInfo failed: ', errorThrown);
+      },
+      always: function() {
+          console.log('getFeatureInfo finished');
+      }
+      });
+    });
+
+    // Water Boundary Test
+    var water_boundary = new L.GeoJSON.AJAX(json_boundary_2, {
+            dataVar: 'json_boundary_2',
+            layerName: 'layer_boundary_2',
+            pane: 'pane_boundary_2',
+            style: function style_boundary_2_0() {
+        return {
+                pane: 'pane_boundary_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 3.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        },
+  
+    });
+    water_boundary.addTo(map);
+    map.createPane('pane_boundary_2');
+    map.getPane('pane_boundary_2').style.zIndex = 402;
+    map.getPane('pane_boundary_2').style['mix-blend-mode'] = 'normal';
+
+    //Route Layer test
+    var route_layer = new L.GeoJSON.AJAX(route_url,{
+      attribution: '',
+      interactive: true,
+      dataVar: 'json_Route_3',
+      layerName: 'layer_Route_3',
+      pane: 'pane_Route_3',
+      onEachFeature: function pop_Route_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = `<h3>${feature.properties.name}</h3>`;
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        },
+
+      style: function style_Route_3_0(feature) {
+            switch(String(feature.properties['name'])) {
+                case 'Agboyi-Ajah':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(103,0,13,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Ajah-Takwa Bay':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(147,11,19,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Amuwo-Odofin to Falomo':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(179,18,24,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Baiyeku-Ajah':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(201,24,29,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Baiyeku-Falomo':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(221,42,37,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Falomo- Ikorodu':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(240,62,46,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Falomo-Ajah':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(246,87,62,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Falomo-Ilado':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(251,112,80,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Falomo-Oworonsoki':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(252,134,102,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Falomo-Takwa Bay':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(252,156,126,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Ikorodu-Ebutu Ero':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(252,179,152,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Ikorodu-Takwa Bay':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(253,200,178,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Osborne-Ikorodu':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(254,220,205,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Oworonsoki-Oshodi':
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(254,233,224,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Route_3',
+                opacity: 1,
+                color: 'rgba(255,245,240,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        },
+
+    });
+    route_layer.addTo(map);
+    map.createPane('pane_Route_3');
+    map.getPane('pane_Route_3').style.zIndex = 404;
+    map.getPane('pane_Route_3').style['mix-blend-mode'] = 'normal';
+
+  // Add Jetty Data
+  // Pop up function
+  function pop_Commercial_Jetty_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = `<h3>${feature.properties.name}</h3>`;
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            layer.on("click", function(e){
+                panel = document.getElementsByClassName("cd-panel cd-panel--from-right js-cd-panel-main")[0];
+                // Change Slideout Variables here
+                jettyName.innerHTML = feature.properties.name
+                panel.classList.add("cd-panel--is-visible");
+            });
+          
+        
+        }
+  // Jetty Styling Function
+  map.createPane('pane_Commercial_Jetty_4');
+  map.getPane('pane_Commercial_Jetty_4').style.zIndex = 406;
+  map.getPane('pane_Commercial_Jetty_4').style['mix-blend-mode'] = 'normal';
+  var jetty_layer = new L.GeoJSON.AJAX(jetty_url,{
+    attribution: '',
+    interactive: true,
+    dataVar: 'json_Commercial_Jetty_4',
+    layerName: 'layer_Commercial_Jetty_4',
+    pane: 'pane_Commercial_Jetty_4',
+    onEachFeature: pop_Commercial_Jetty_4,
+    });
+    jetty_layer.addTo(map);
+
+     // Jetty ISIS Function
+  map.createPane('isis');
+  map.getPane('isis').style.zIndex = 406;
+  map.getPane('isis').style['mix-blend-mode'] = 'normal';
+  var isis_layer = new L.GeoJSON.AJAX(isis,{
+    });
+    isis_layer.addTo(map);
+
+    // Add option to import shapefiles here (kml, geojson, shapefile)
+    
+
+    // Add option to create a new path or new jetty to database
+
+    // Add tool to measure pat profile
+
+   
+
+        
+      
+    
+
+}
+// Jetty Image slides
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+}
+</script>
+
+    
+    {% leaflet_map "lagosMap" callback="window.map_init_basic" %}
+
+    {% endblock %}

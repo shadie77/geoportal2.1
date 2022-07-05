@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+{% extends 'dashboard/base2.html' %}
+{% load static %}
+{% block body_block %}
+{{ passenger_in|json_script:"passengerInList" }};
+{{ bathy_data|json_script:"bathyData"}}
+<script>
+    var passengerIn = {{ arrival_count.number_of_passengers__sum  }};
+    var passengerOut  = {{ departure_count.number_of_passengers__sum }};
+    var boatIn = {{ arrival_boat_count }};
+    var boatOut = {{ departure_boat_count }};
+    var val = JSON.parse(document.getElementById('passengerInList').textContent);
+    var bathymetry = JSON.parse(document.getElementById('bathyData').textContent);
+    console.log(bathymetry)
+    function slide(){
+        var btn_click = document.getElementsByClassName('trialfix')[0];
+        var arrow = document.getElementById('arrowDirection');
+        btn_click.classList.toggle('active');
+        if (btn_click.classList.contains('active')){
+            arrow.innerHTML = '︽';
+        } else {
+            arrow.innerHTML = '︾';
+                }
+        }
+</script>
+<div class="mainContent">
+    <aside class="filterDiv">
+        <div class="trialfix">
+            <header class="laswatitle">
+                <img src="{% static 'images/laswa.png' %}" alt="Laswa Logo"/>
+                <h3>LAGOS STATE WATERWAYS AUTHORITY</h3>
+            
+            </header>
+            <div class="topic">
+                <span style="display: inline-block; padding: 11px 10px; font-weight: bold; color: rgb(31, 31, 30);">Filters</span>
+            </div>
+            <div class="rangeFlex">
+                <div class="label">
+                    Date
+                </div>
+                <div class="datebox">
+                    <div>
+                        <input type="date" value="1970-01-01">
+                        <span> &nbsp; - &nbsp;</span>
+                        <input type="date" value="1970-01-01">
+                    </div>
+                </div>
+            </div>
+            <div class="rangeFlex even">
+                <div class="label">
+                    <label for="month">Month:</label>
+                </div>
+                <div class="datebox">
+                    <div>
+                        <select id="month" name="month">
+                        <option selected>January</option>
+                        <option>February</option>
+                        <option>March</option>
+                        <option>April</option>
+                        <option>May</option>
+                        <option>June</option>
+                        <option>July</option>
+                        <option>August</option>
+                        <option>September</option>
+                        <option>October</option>
+                        <option>November</option>
+                        <option>December</option>
+                        </select>
+                        <span> &nbsp; - &nbsp;</span>
+                        <select id="month" name="month">
+                            <option>January</option>
+                            <option>February</option>
+                            <option>March</option>
+                            <option>April</option>
+                            <option>May</option>
+                            <option>June</option>
+                            <option>July</option>
+                            <option>August</option>
+                            <option>September</option>
+                            <option>October</option>
+                            <option>November</option>
+                            <option selected>December</option>
+                            </select>
+                    </div>
+                </div>
+            </div>
+            <div class="rangeFlex">
+                <div class="label">
+                    Day of the Week
+                </div>
+                <div class="datebox">
+                    <div>
+                        <select id="day" name="day">
+                            <option selected>Sunday</option>
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                            <option>Saturday</option>
+                        </select>
+                        <span> &nbsp; - &nbsp;</span>
+                        <select id="day" name="day">
+                            <option>Sunday</option>
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                            <option selected>Saturday</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="rangeFlex even">
+                <div class="label">
+                    Hour
+                </div>
+                <div class="datebox">
+                    <div>
+                        <input type="date" value="1970-01-01">
+                        <span> &nbsp; - &nbsp;</span>
+                        <input type="date" value="1970-01-01">
+                    </div>
+                </div>
+            </div>
+            <div class="submitDiv">
+                <input type="submit" value="Filter">
+            </div>
+            <div class="scrollcontainer" onclick="slide()">
+                <div class="scroll">
+                    <span id="arrowDirection" style="font-size: 1.5rem; font-weight: 1.5rem; margin: 50%;">︾</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <div class="contentDiv">
+        
+        <div class="pictureDiv">
+            <!--
+            <img src="{% static 'images/test/test4.jpg' %}"/>
+            -->
+            <!-- Add Jetty Image Slide Here -->
+            {% for picture in jetty_pictures %}
+                <img class="pictures" style="object-fit: cover;" src="{{picture.picture.url}}"/>
+            {% endfor %}
+            
+            <h3>{{ jetty.name }}</h3>
+        </div>
+        <div class="summaryChartDiv">
+            <!-- Add Summary Pie Charts Here -->
+
+
+            <!---------------------------------->
+            <div class="summaryDiv">
+                <div class="summaryHeader">
+                    <!-- Header Goes Here-->
+                    Jetty Supervisors
+                </div>
+                <div class="tableDiv">
+                    <table class="jettyinfotable">
+                        {% for supervisor in jetty_supervisors %}
+                            <tr>
+                                <td>1</td>
+                                <td>{{supervisor.firstname}} {{supervisor.surname}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            <!--------------------------------------------------------->
+            <div class="summaryDiv">
+                <div class="summaryHeader">
+                    <!-- Header Goes Here-->
+                    App Usage
+                </div>
+                <div class="summaryDetails">
+                    <div class="summarychild passengerchartWordings">
+                        <div style="width: 25px; height: 10px; background-color: #f443368c; display: inline-block; float: right;">&nbsp;</div>
+                        <span style="font-size:small; color: #f443368c; float: right;"> In&nbsp; </span>
+                        <br>
+                        <div class="count">
+                            {{ arrival_count.number_of_passengers__sum }}
+                        </div>
+                    </div>
+                    <div class="summarychild">
+                        <canvas id="piechart"></canvas>
+                        <!-- Javascript code for doughnut chart 
+                        <figure class="chart__figure">
+                            <canvas class="chart__canvas" id="chartCanvas" width="100%" max-height="100%" aria-label="Example doughnut chart showing data as a percentage" role="img"></canvas>
+                        </figure>
+                    -->
+                    </div>
+                    <div class="summarychild passengerchartWordings">
+                        <div style="width: 25px; height: 10px; background-color: #2196f38c; display: inline-block;">&nbsp;</div>
+                        <span style="font-size:small; color: #2196f38c;"> Out </span>
+                        <br> 
+                        <div class="count">
+                            {{ departure_count.number_of_passengers__sum }}    
+                        </div>   
+                    </div>
+                </div>
+            </div>
+            <div class="summaryDiv">
+                <div class="summaryHeader">
+                    <!-- Header Goes Here-->
+                    Total Passenger Count
+                </div>
+                <div class="summaryDetails">
+                    <div class="summarychild passengerchartWordings">
+                        <div style="width: 25px; height: 10px; background-color: #f443368c; display: inline-block; float: right;">&nbsp;</div>
+                        <span style="font-size:small; color: #f443368c; float: right;"> In&nbsp; </span>
+                        <br>
+                        <div class="count">
+                            {{ arrival_count.number_of_passengers__sum }}
+                        </div>
+                    </div>
+                    <!-- Add Avg Passenger Pie Chart Here-->
+                    <div class="summarychild">
+                        <canvas id="passengerpiechart"></canvas>
+                        <span style="position: relative; left: 20%; top:-60%; font-size: larger; font-weight: bolder; color:#f4938c;">{{ passenger_percent_In }}%</span>
+                        <!-- Javascript code for doughnut chart -->
+                    </div>
+                    <div class="summarychild passengerchartWordings">
+                        <div style="width: 25px; height: 10px; background-color: #2196f38c; display: inline-block;">&nbsp;</div>
+                        <span style="font-size:small; color: #2196f38c;"> Out </span>
+                        <br> 
+                        <div class="count">
+                            {{ departure_count.number_of_passengers__sum }}    
+                        </div>  
+                        
+                    </div>
+                </div>
+                
+            </div>
+            <div class="summaryDiv">
+                <!-- Add Avg Boat Ride Here -->
+                <div class="summaryHeader">
+                    <!-- Header Goes Here-->
+                    Total Boat Count
+                </div>
+                <div class="summaryDetails">
+                    <div class="summarychild">
+                        <div style="width: 25px; height: 10px; background-color: #f443368c; display: inline-block; float: right;">&nbsp;</div>
+                        <span style="font-size:small; color: #f443368c; float: right;"> In&nbsp; </span>
+                        <br>
+                        <div class="count">
+                            {{ arrival_boat_count }}
+                        </div>
+                    </div>
+                    <div class="summarychild">
+                        <!-- Javascript code for doughnut chart -->
+                        <canvas id="boatpiechart"></canvas>
+                        <span style="position: relative; left: 20%; top:-60%; font-size: larger; color:#f4938c; font-weight: bolder;">{{ boat_percent_In }}%</span>
+                    </div>
+                    <div class="summarychild boatchartWordings">
+                        <div style="width: 25px; height: 10px; background-color: #2196f38c; display: inline-block;">&nbsp;</div>
+                        <span style="font-size:small; color: #2196f38c;"> Out </span>
+                        <br> 
+                        <div class="count">
+                            {{ departure_boat_count }}    
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+        <div class="linechartDiv">
+            <!-- Add line charts for passenger and boasts here-->
+            <div class="linechart passengerData">
+                <!-- Passenger line chart here-->
+                <div class="summaryHeader">
+                    Passenger Data
+                </div>
+                <div>
+                    <canvas id="linechart"></canvas>
+                </div>
+            </div>
+            <div class="linechart boatData">
+                <!-- Add line chart for boat ride here-->
+                <div class="summaryHeader">
+                    Boat Data
+                </div>
+                <div>
+                    <canvas id="linechart2"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="linechartDiv bathyDiv">
+            <div class="linechart">
+                <div class="summaryHeader">
+                    Bathymetry
+                </div>
+                <diV id="batthyy">
+                </diV>
+
+            </div>
+            <div class="linechart">
+                <div class="summaryHeader">
+                    Trip Analysis
+                </div>
+                <div class="tripDiv">
+                    <div style="width: 50%; height: 500px;">
+                        <canvas id="travelout"></canvas>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="linechartDiv">
+            <div class="linechart">
+                <div class="summaryHeader">
+                    Needs Assessment (Facilities)
+                </div>
+                <div class="tableDiv">
+                    <table class="jettyinfotable">
+                        <tr>
+                            <th></th>
+                            <th>Infrastructure</th>
+                            <th>Yes</th>
+                            <th>No</th>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Restaurants</td>
+                            <td>Yes</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Access Road</td>
+                            <td>Y</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Parking Space</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Building</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Waiting Room</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Ticketing Area</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                </table>
+                </div>
+
+            </div>
+            <div class="linechart">
+                <div class="summaryHeader">
+                    Needs Assessment (Security)
+                </div>
+                <div class="tableDiv">
+                    <table class="jettyinfotable">
+                        <tr>
+                            <th></th>
+                            <th>Safety Amenities</th>
+                            <th>Yes</th>
+                            <th>No</th>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Fender</td>
+                            <td>Yes</td>
+                            <td>&#x2715</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Anchor</td>
+                            <td>Y</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Buoys</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Life Jackets</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Security Personnels</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Fire Station</td>
+                            <td>N</td>
+                            <td>N</td>
+                        </tr>
+                </table>
+                    
+                    
+                </div>
+            </div>
+            <div class="linechart">
+                <div class="summaryHeader">
+                    Needs Assessment (Infrastructures)
+                </div>
+                <div class="tableDiv">
+                    <table class="jettyinfotable">
+                            <tr>
+                                <th></th>
+                                <th>Infrastructure</th>
+                                <th>Yes</th>
+                                <th>No</th>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Disability Ramp</td>
+                                <td id="yes">&#10004;</td>
+                                <td id="no">No</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Restrooms</td>
+                                <td>Y</td>
+                                <td>N</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Landing Dock</td>
+                                <td>N</td>
+                                <td>N</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Guard Rails</td>
+                                <td>N</td>
+                                <td>N</td>
+                            </tr>
+                    </table>
+                    
+                    
+                </div>
+            </div>
+        </div>
+      
+        {{ labels }}
+
+        {% for each in passenger_in %}
+        <p>
+        {{ each.year|date:'Y' }}, {{ each.number_of_passengers__sum }}
+        </p>
+        {% endfor %}
+        {% for coord in jetty.geom.coords %}
+            {% for lon in coord %}
+                {{ lon }}
+            {% endfor%}
+        {% endfor %}
+        {% for picture in jetty_pictures %}
+            <p> {{ picture.medium_picture }}</p>
+        {% endfor %}
+        <p></p>
+        {% for rider in ridership %}
+        <p>{{rider.arrival_departure}}</p>
+        <p>{{ rider.arrival_departure_time }}</p>
+        <p> {{ rider.total_number_of_passengers}}</p>
+        <p> {{ rider.transport_fare}}</p>
+        <p></p>
+        <p></p>
+        {% endfor %}
+    </div>
+    <aside class="sidePanelDiv">
+        <section>
+            {% if user.user_profile.profile_pic %}
+                <img src="{{ user.user_profile.profile_pic.url }}" />
+            {% else %}
+                <img src="{% static 'default/default.jpg' %}" />
+              {% endif %}
+            <section>
+                <name>{{ user.first_name}} {{ user.last_name }}</name>
+                <actions><a href="#settings">Profile</a> | <a href="{% url 'signout' %}">logout</a></actions>
+            </section>
+        </section>
+        <div class="topic">
+            <span style="display: inline-block; padding: 11px 10px; font-weight: bold; color: rgb(31, 31, 30);">Jetty Information</span>
+        </div>
+        <div class="needsDiv">
+            <table class="jettyinfotable">
+                <tr>
+                    <td>1</td>
+                    <td>Ikorodu, Lagos</td>
+                </tr>
+                {% for coord in jetty.geom.coords %}
+                    {% for lon in coord %}
+                        <tr>
+                            <td>1</td>
+                            <td>{{lon}}</td>
+                        </tr>
+                    {% endfor%}
+                {% endfor %}
+                <tr>
+                    <td>Hierarchy</td>
+                    <td>{{ jetty.terminal }}</td>
+                </tr>
+                <tr>
+                    <td>Landing</td>
+                    <td>{{ jetty.type }}</td>
+                </tr>
+                
+                
+            </table>
+        </div>
+        <div class="topic">
+            <span style="display: inline-block; padding: 11px 10px; font-weight: bold; color: rgb(31, 31, 30);">Respondents Comments</span>
+        </div>
+        ︽
+        ︾
+
+           
+
+    </aside>
+
+</div>
+
+<script type="text/javascript" src="{% static 'scripts/details.js' %}"></script>
+<script type="text/javascript" src="{% static 'scripts/jettydetails.js' %}"></script>
+
+{% endblock %}
